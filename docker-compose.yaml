@@ -1,0 +1,66 @@
+version: '3'
+
+networks:
+  wordpress-network:
+
+services:
+  php-fpm:
+    build:
+      context: ./services/php-fpm
+    env_file:
+      - ./.env
+    volumes:
+      - ./app:/var/www/html
+    networks:
+      - wordpress-network
+    depends_on:
+      - mysql
+
+  nginx:
+    build:
+      context: ./services/nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/var/www/html
+      - ./services/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - php-fpm
+    networks:
+      - wordpress-network
+
+  mysql:
+    build:
+      context: ./services/mysql
+    ports:
+      - "13306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./.tmp/mysql:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+    networks:
+      - wordpress-network
+
+  composer:
+      build:
+        context: ./services/composer
+      volumes:
+        - ./app:/var/www/html
+      networks:
+        - wordpress-network
+
+  wp-cli:
+    build:
+      context: ./services/wp-cli
+    env_file:
+      - ./.env
+    volumes:
+      - ./app:/var/www/html
+    networks:
+      - wordpress-network
+    depends_on:
+      - mysql
