@@ -13,7 +13,7 @@ Docker based multisite WordPress setup.
 2. Copy `.env.example` to `.env`
 3. Run `docker-compose up` and wait for containers to start
 4. Run `docker-compose run composer install` to install composer packages
-5. If you skipped step 1, open `http://localhost/wp/wp-admin/install.php` to run WP installer
+5. Open `http://localhost/wp-admin` in your browser
 
 ## Some commands/tools
 
