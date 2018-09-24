@@ -4,28 +4,15 @@ networks:
   wordpress-network:
 
 services:
-  php-fpm:
+  wordpress:
     build:
-      context: ./services/php-fpm
+      context: .
     env_file:
       - ./.env
     volumes:
       - ./app:/var/www/html
-    networks:
-      - wordpress-network
-    depends_on:
-      - mysql
-
-  nginx:
-    build:
-      context: ./services/nginx
     ports:
       - "80:80"
-    volumes:
-      - ./app:/var/www/html
-      - ./services/nginx/conf.d:/etc/nginx/conf.d
-    depends_on:
-      - php-fpm
     networks:
       - wordpress-network
 
